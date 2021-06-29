@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -122,12 +122,47 @@ class _HomeState extends State<Home> {
 
   }
 
+  Future<void> recuperarLocalizacaoAtual() async{
+
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('GPS DESATIVADO');
+    }
+
+    permission = await Geolocator.checkPermission();
+
+    //VERIFICA SE POSSUI A PERMISSÃO, SE NÃO TIVER FAZ A REQUISIÇÃO
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'ACESSO NEGADO AO SERVIÇO DE LOCALIZAÇÃO');
+    }
+
+    Position localizacaoAtual = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high
+    );
+
+    print(localizacaoAtual.latitude);
+    print(localizacaoAtual.longitude);
+  }
+
+
   @override
   void initState() {
     super.initState();
-    carregarMarcadores();
-    carregarPoligonos();
-    carregarLinhas();
+    // carregarMarcadores();
+    // carregarPoligonos();
+    // carregarLinhas();
+    recuperarLocalizacaoAtual();
   }
 
   @override
