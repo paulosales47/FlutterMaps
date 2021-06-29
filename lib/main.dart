@@ -22,6 +22,8 @@ class _HomeState extends State<Home> {
 
   Completer<GoogleMapController> _controller = Completer();
   Set<Marker> _marcadores = {};
+  Set<Polygon> _poligonos = {};
+  Set<Polyline> _linhas = {};
 
   Future<void> movimentarCamera() async{
     GoogleMapController googleMapController = await _controller.future;
@@ -32,7 +34,7 @@ class _HomeState extends State<Home> {
 
   void carregarMarcadores(){
     Marker marcadorA = Marker(markerId: MarkerId("vale-sul"),
-      position: LatLng(-23.2109299,-45.9100345),
+      position: LatLng(-23.215421007011514, -45.89097817623199),
       infoWindow: InfoWindow(title: "Vale Sul"),
       icon: BitmapDescriptor.defaultMarkerWithHue(
         BitmapDescriptor.hueMagenta
@@ -40,7 +42,7 @@ class _HomeState extends State<Home> {
     );
 
     Marker marcadorB = Marker(markerId: MarkerId("center-vale"),
-        position: LatLng(-23.2066535,-45.9245497),
+        position: LatLng(-23.183677552695187, -45.852558919904894),
         infoWindow:InfoWindow(title: "Center Vale"),
         icon: BitmapDescriptor.defaultMarkerWithHue(
           BitmapDescriptor.hueGreen
@@ -55,10 +57,77 @@ class _HomeState extends State<Home> {
     _marcadores.add(marcadorB);
   }
 
+  void carregarPoligonos(){
+     Polygon poligonoA = Polygon(
+       polygonId: PolygonId("A"),
+       fillColor:  Colors.orange,
+       strokeColor: Colors.red,
+       strokeWidth: 10,
+       points: [
+         LatLng(-23.192176136013813, -45.78929207082668),
+         LatLng(-23.196857392198442, -45.79005719497136),
+         LatLng(-23.19780923580619, -45.78381429290133),
+         LatLng(-23.193023575678847, -45.78307467640101)
+       ],
+       consumeTapEvents: true,
+       onTap: (){
+         print("clicado A");
+       },
+       zIndex: 1
+     );
+
+     Polygon poligonoB = Polygon(
+         polygonId: PolygonId("A"),
+         fillColor:  Colors.purple,
+         strokeColor: Colors.blue,
+         strokeWidth: 10,
+         points: [
+           LatLng(-23.196473614672886, -45.78616102029726),
+           LatLng(-23.196632066210956, -45.784902317628095),
+           LatLng(-23.19932677639783, -45.78537465230366),
+           LatLng(-23.198830531225074, -45.786530667343584)
+         ],
+         consumeTapEvents: true,
+         onTap: (){
+           print("clicado B");
+         },
+         zIndex: 0
+     );
+
+     _poligonos.add(poligonoA);
+     _poligonos.add(poligonoB);
+  }
+
+  void carregarLinhas(){
+
+    Polyline linhaA = Polyline(
+      polylineId: PolylineId("A"),
+      color: Colors.red,
+      width: 5,
+      startCap: Cap.roundCap,
+      jointType: JointType.round,
+      points: [
+        LatLng(-23.260530583975296, -45.94453178896132),
+        LatLng(-23.193427964304, -45.792444606167685),
+        LatLng(-23.256981029561093, -45.824272831740885),
+      ],
+      consumeTapEvents: true,
+      onTap: (){
+        print("clicado na linha");
+      }
+    );
+
+
+    _linhas.add(linhaA);
+
+  }
+
   @override
   void initState() {
     super.initState();
     carregarMarcadores();
+    carregarPoligonos();
+    carregarLinhas();
   }
 
   @override
@@ -76,7 +145,7 @@ class _HomeState extends State<Home> {
       body: Container(
         child: GoogleMap(
           initialCameraPosition: CameraPosition(
-            target: LatLng(-23.1947815,-45.8546547),
+            target: LatLng(-23.213886545142074, -45.89346589428589),
             zoom: 12
           ),
           mapType: MapType.normal,
@@ -84,6 +153,8 @@ class _HomeState extends State<Home> {
             _controller.complete(controller);
           },
           markers: _marcadores,
+          polygons: _poligonos,
+          polylines: _linhas,
         ),
       ),
     );
