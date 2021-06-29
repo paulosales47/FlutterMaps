@@ -21,12 +21,44 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
 
   Completer<GoogleMapController> _controller = Completer();
+  Set<Marker> _marcadores = {};
 
   Future<void> movimentarCamera() async{
     GoogleMapController googleMapController = await _controller.future;
     googleMapController.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(target: LatLng(-23.5143, -46.6004), zoom: 16, tilt: 45, bearing: 270)
     ));
+  }
+
+  void carregarMarcadores(){
+    Marker marcadorA = Marker(markerId: MarkerId("vale-sul"),
+      position: LatLng(-23.2109299,-45.9100345),
+      infoWindow: InfoWindow(title: "Vale Sul"),
+      icon: BitmapDescriptor.defaultMarkerWithHue(
+        BitmapDescriptor.hueMagenta
+      )
+    );
+
+    Marker marcadorB = Marker(markerId: MarkerId("center-vale"),
+        position: LatLng(-23.2066535,-45.9245497),
+        infoWindow:InfoWindow(title: "Center Vale"),
+        icon: BitmapDescriptor.defaultMarkerWithHue(
+          BitmapDescriptor.hueGreen
+        ),
+        rotation: 45,
+        onTap: (){
+          print("Center Vale");
+        }
+    );
+
+    _marcadores.add(marcadorA);
+    _marcadores.add(marcadorB);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    carregarMarcadores();
   }
 
   @override
@@ -44,15 +76,14 @@ class _HomeState extends State<Home> {
       body: Container(
         child: GoogleMap(
           initialCameraPosition: CameraPosition(
-            target: LatLng(-23.1143, -45.4704),
-            zoom: 10
+            target: LatLng(-23.1947815,-45.8546547),
+            zoom: 12
           ),
           mapType: MapType.normal,
           onMapCreated: (GoogleMapController controller){
             _controller.complete(controller);
-
-
           },
+          markers: _marcadores,
         ),
       ),
     );
