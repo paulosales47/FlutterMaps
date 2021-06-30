@@ -24,11 +24,16 @@ class _HomeState extends State<Home> {
   Set<Marker> _marcadores = {};
   Set<Polygon> _poligonos = {};
   Set<Polyline> _linhas = {};
+  CameraPosition _posicaoCamera = CameraPosition(
+    target: LatLng(-23.213886545142074, -45.89346589428589),
+    zoom: 12
+  );
+
 
   Future<void> movimentarCamera() async{
     GoogleMapController googleMapController = await _controller.future;
     googleMapController.animateCamera(CameraUpdate.newCameraPosition(
-      CameraPosition(target: LatLng(-23.5143, -46.6004), zoom: 16, tilt: 45, bearing: 270)
+      _posicaoCamera
     ));
   }
 
@@ -151,8 +156,14 @@ class _HomeState extends State<Home> {
       desiredAccuracy: LocationAccuracy.high
     );
 
-    print(localizacaoAtual.latitude);
-    print(localizacaoAtual.longitude);
+    setState(() {
+      _posicaoCamera = CameraPosition(target:
+      LatLng(localizacaoAtual.latitude, localizacaoAtual.longitude),
+          zoom: 16
+      );
+      movimentarCamera();
+    });
+
   }
 
 
@@ -179,17 +190,15 @@ class _HomeState extends State<Home> {
       ),
       body: Container(
         child: GoogleMap(
-          initialCameraPosition: CameraPosition(
-            target: LatLng(-23.213886545142074, -45.89346589428589),
-            zoom: 12
-          ),
+          initialCameraPosition: _posicaoCamera,
           mapType: MapType.normal,
           onMapCreated: (GoogleMapController controller){
             _controller.complete(controller);
           },
-          markers: _marcadores,
-          polygons: _poligonos,
-          polylines: _linhas,
+          // markers: _marcadores,
+          // polygons: _poligonos,
+          // polylines: _linhas,
+          myLocationEnabled: true,
         ),
       ),
     );
