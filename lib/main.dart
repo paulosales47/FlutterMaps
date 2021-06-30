@@ -152,19 +152,23 @@ class _HomeState extends State<Home> {
           'ACESSO NEGADO AO SERVIÇO DE LOCALIZAÇÃO');
     }
 
-    Position localizacaoAtual = await Geolocator.getCurrentPosition(
+    Geolocator.getPositionStream(
+      distanceFilter: 10,
       desiredAccuracy: LocationAccuracy.high
-    );
+    ).listen((Position localizacao) {
+      setState(() {
+        _posicaoCamera = CameraPosition(
+          target: LatLng(localizacao.latitude, localizacao.longitude),
+          zoom:  17
+        );
 
-    setState(() {
-      _posicaoCamera = CameraPosition(target:
-      LatLng(localizacaoAtual.latitude, localizacaoAtual.longitude),
-          zoom: 16
-      );
-      movimentarCamera();
+        movimentarCamera();
+      });
     });
 
   }
+
+
 
 
   @override
