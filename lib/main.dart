@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -168,6 +169,25 @@ class _HomeState extends State<Home> {
 
   }
 
+  Future<void> recuperarEndereco() async {
+    var geoCoding = GeocodingPlatform.instance;
+
+    List<Location> coordenadas = await geoCoding.locationFromAddress("Praça primeiro de maio, São José dos Campos");
+
+    if(coordenadas.length > 0){
+      List<Placemark> enderecos = await geoCoding.placemarkFromCoordinates(coordenadas[0].latitude, coordenadas[0].longitude);
+
+      print(enderecos[0].administrativeArea);
+      print(enderecos[0].subAdministrativeArea);
+      print(enderecos[0].locality);
+      print(enderecos[0].subLocality);
+      print(enderecos[0].thoroughfare);
+      print(enderecos[0].subThoroughfare);
+      print(enderecos[0].postalCode);
+      print(enderecos[0].country);
+      print(enderecos[0].isoCountryCode);
+    }
+  }
 
 
 
@@ -177,7 +197,8 @@ class _HomeState extends State<Home> {
     // carregarMarcadores();
     // carregarPoligonos();
     // carregarLinhas();
-    recuperarLocalizacaoAtual();
+    //recuperarLocalizacaoAtual();
+    recuperarEndereco();
   }
 
   @override
